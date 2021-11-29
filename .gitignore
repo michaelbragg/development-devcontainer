@@ -1,0 +1,25 @@
+
+# System
+
+error_log
+.DS_Store
+
+# Development
+
+## Composer
+auth.json
+composer.lock
+/vendor
+/tools/*/vendor
+
+## NodeJS
+/node_modules/*
+/package-lock.json
+
+# Server
+.env
+*.env
+!/example.env
+*.log
+
+# Application

@@ -1,0 +1,164 @@
+version: '3.7'
+services:
+
+# ============================================================================ #
+# Proxy                                                                        #
+# ============================================================================ #
+
+  traefik:
+    image: traefik:v2.5.4
+    container_name: "traefik"
+    restart: unless-stopped
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.public.address=:8080"
+      - "--entrypoints.traefik.address=:8888"
+      # - "--entrypoints.secure.address=:433"
+    ports:
+      - "8888:8888"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - public
+    labels:
+      - traefik.enable=true
+      - traefik.backend=traefik
+      - traefik.docker.network=public
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}_traefik.loadbalancer.server.port=8888
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_traefik.rule=Host(`traefik.${PROJECT_BASE_URL}`)
+      # - traefik.frontend.auth.basic=${TRAEFIK_AUTH}
+
+# ============================================================================ #
+# Nginx                                                                        #
+# ============================================================================ #
+
+  nginx:
+    container_name: "nginx"
+    build:
+      dockerfile: ./nginx/nginx.dockerfile
+      context: .
+    depends_on:
+      - mysql
+      - php
+    ports:
+      - "8080:80"
+    volumes:
+      - ../:/var/www/:delegated
+    networks:
+      public:
+        aliases:
+          - ${PROJECT_BASE_URL}
+          - www.${PROJECT_BASE_URL}
+      private:
+    labels:
+      - traefik.enable=true
+      - traefik.backend=nginx
+      - traefik.docker.network=public
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}_nginx.loadbalancer.server.port=8080
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.entrypoints=public
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.rule=Host(`www.${PROJECT_BASE_URL}`)
+
+# ============================================================================ #
+# Application                                                                  #
+# ============================================================================ #
+
+  php:
+    container_name: "php"
+    build:
+      dockerfile: ./php/php.dockerfile
+      context: .
+    #user: "33"  # Set to your web-server user
+    restart: unless-stopped
+    working_dir: /var/www/public
+    volumes:
+      - ../:/var/www/:delegated
+    # extra_hosts:
+    #   - '${LOOPBACK_HOST_NAME}:192.168.35.10' # IP should match the IP address set for nginx below
+    environment:
+      SESSION_DRIVER: redis
+      CACHE_DRIVER: redis
+      XDEBUG_ENABLE: 1
+    labels:
+        - traefik.enable=false
+    networks:
+      - public
+      - private
+
+  # wpcli:
+  #   container_name: "wpcli"
+  #   image: wordpress:cli
+  #   #restart: on-failure
+  #   user: xfs
+  #   volumes:
+  #     - ../:/var/www/:delegated
+  #   #entrypoint: wp
+  #   #command: "--info"
+  #   networks:
+  #     - public
+  #     - private
+  #   labels:
+  #     - traefik.enable=false
+
+# ============================================================================ #
+# Database                                                                     #
+# ============================================================================ #
+
+  mysql:
+    container_name: "mysql"
+    build:
+      dockerfile: ./mysql/mysql.dockerfile
+      context: .
+    volumes:
+      - ./database:/var/lib/mysql:delegated
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PROJECT_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${PROJECT_MYSQL_DATABASE}
+      MYSQL_USER: ${PROJECT_MYSQL_USER}
+      MYSQL_PASSWORD: ${PROJECT_MYSQL_PASSWORD}
+    # command: @TODO create databases on if not there.
+    labels:
+      - traefik.enable=false
+    networks:
+      - private
+
+# ============================================================================ #
+# Mail                                                                         #
+# ============================================================================ #
+
+  mailhog:
+    container_name: "mailhog"
+    image: mailhog/mailhog:latest
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+    networks:
+      - public
+      - private
+    labels:
+      - traefik.enable=true
+      - traefik.backend=mailhog
+      - traefik.docker.network=public
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}_mailhog.loadbalancer.server.port=8025
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailhog.rule=Host(`mailhog.${PROJECT_BASE_URL}`)
+
+# ============================================================================ #
+# Networks                                                                     #
+# ============================================================================ #
+
+networks:
+  private:
+    external: false
+  public:
+    external: true
+
+# ============================================================================ #
+# Volumes                                                                      #
+# ============================================================================ #
+
+# volumes:
+#   wordpress: {}
