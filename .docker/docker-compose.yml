@@ -71,11 +71,11 @@ services:
       context: .
     #user: "33"  # Set to your web-server user
     restart: unless-stopped
+    extra_hosts:
+      - "www.${PROJECT_BASE_URL}:172.18.0.1"
     working_dir: /var/www/public
     volumes:
       - ../:/var/www/:delegated
-    # extra_hosts:
-    #   - '${LOOPBACK_HOST_NAME}:192.168.35.10' # IP should match the IP address set for nginx below
     environment:
       SESSION_DRIVER: redis
       CACHE_DRIVER: redis
