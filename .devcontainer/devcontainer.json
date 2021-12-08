@@ -10,7 +10,11 @@
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"ms-azuretools.vscode-docker",
-		"felixfbecker.php-debug"
+		"felixfbecker.php-debug",
+		"eamodio.gitlens",
+		"editorconfig.editorconfig",
+		"ikappas.composer",
+		"neilbrayfield.php-docblocker"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
