@@ -65,6 +65,14 @@ Visit [http://localhost:8080](http://localhost:8080) or [http://www.devcontainer
 - Traefik: [http://localhost:8888](http://localhost:8888)
 - Mailhog: [http://localhost:8025](http://localhost:8025)
 
+Shutdown docker and devContiainer:
+
+```
+./bin/docker-down.sh
+```
+
+Close the VS Code window.
+
 ## Contact
 
 If you want to contact me you can reach me at <email@michaelbragg.com>.
