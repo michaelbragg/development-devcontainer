@@ -19,7 +19,7 @@ composer.lock
 # Server
 .env
 *.env
-!/example.env
+!example.env
 *.log
 
 # Application

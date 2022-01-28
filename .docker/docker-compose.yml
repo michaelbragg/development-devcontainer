@@ -26,9 +26,9 @@ services:
       - traefik.enable=true
       - traefik.backend=traefik
       - traefik.docker.network=public
-      - traefik.http.services.${COMPOSE_PROJECT_NAME}_traefik.loadbalancer.server.port=8888
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_traefik.rule=Host(`traefik.${PROJECT_BASE_URL}`)
-      # - traefik.frontend.auth.basic=${TRAEFIK_AUTH}
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-develop}_traefik.loadbalancer.server.port=8888
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-develop}_traefik.rule=Host(`traefik.${PROJECT_BASE_URL:-localhost}`)
+      # - traefik.frontend.auth.basic=${TRAEFIK_AUTH:-root}
 
 # ============================================================================ #
 # Nginx                                                                        #
@@ -49,16 +49,16 @@ services:
     networks:
       public:
         aliases:
-          - ${PROJECT_BASE_URL}
-          - www.${PROJECT_BASE_URL}
+          - ${PROJECT_BASE_URL:-localhost}
+          - www.${PROJECT_BASE_URL:-localhost}
       private:
     labels:
       - traefik.enable=true
       - traefik.backend=nginx
       - traefik.docker.network=public
-      - traefik.http.services.${COMPOSE_PROJECT_NAME}_nginx.loadbalancer.server.port=8080
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.entrypoints=public
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.rule=Host(`www.${PROJECT_BASE_URL}`)
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-develop}_nginx.loadbalancer.server.port=8080
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-develop}_nginx.entrypoints=public
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-develop}_nginx.rule=Host(`www.${PROJECT_BASE_URL:-localhost}`)
 
 # ============================================================================ #
 # Application                                                                  #
@@ -72,8 +72,8 @@ services:
     #user: "33"  # Set to your web-server user
     restart: unless-stopped
     extra_hosts:
-      - "www.${PROJECT_BASE_URL}:172.18.0.1"
-    working_dir: /var/www/public
+      - "www.${PROJECT_BASE_URL:-localhost}:172.18.0.1"
+    working_dir: ${PROJECT_ROOT_DIR:-/var/www/public}
     volumes:
       - ../:/var/www/:delegated
     environment:
@@ -116,10 +116,10 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: ${PROJECT_MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${PROJECT_MYSQL_DATABASE}
-      MYSQL_USER: ${PROJECT_MYSQL_USER}
-      MYSQL_PASSWORD: ${PROJECT_MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${PROJECT_MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${PROJECT_MYSQL_DATABASE:-wordpress}
+      MYSQL_USER: ${PROJECT_MYSQL_USER:-root}
+      MYSQL_PASSWORD: ${PROJECT_MYSQL_PASSWORD:-root}
     # command: @TODO create databases on if not there.
     labels:
       - traefik.enable=false
@@ -143,8 +143,8 @@ services:
       - traefik.enable=true
       - traefik.backend=mailhog
       - traefik.docker.network=public
-      - traefik.http.services.${COMPOSE_PROJECT_NAME}_mailhog.loadbalancer.server.port=8025
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailhog.rule=Host(`mailhog.${PROJECT_BASE_URL}`)
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-develop}_mailhog.loadbalancer.server.port=8025
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-develop}_mailhog.rule=Host(`mailhog.${PROJECT_BASE_URL:-localhost}`)
 
 # ============================================================================ #
 # Networks                                                                     #
