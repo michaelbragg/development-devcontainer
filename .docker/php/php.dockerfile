@@ -20,8 +20,10 @@ RUN set -ex; \
 		$PHPIZE_DEPS \
 		freetype-dev \
 		imagemagick-dev \
+		icu-dev \
 		libjpeg-turbo-dev \
 		libpng-dev \
+		libwebp-dev \
 		libzip-dev \
 	; \
 	\
@@ -31,6 +33,7 @@ RUN set -ex; \
 		bcmath \
 		exif \
 		gd \
+		intl \
 		mysqli \
 		zip \
 	; \
