@@ -112,15 +112,14 @@ services:
       context: .
     volumes:
       - ./database:/var/lib/mysql:delegated
+    command: --init-file="/var/lib/mysql/init.sql"
     restart: unless-stopped
     ports:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${PROJECT_MYSQL_ROOT_PASSWORD:-root}
-      MYSQL_DATABASE: ${PROJECT_MYSQL_DATABASE:-wordpress}
       MYSQL_USER: ${PROJECT_MYSQL_USER:-root}
       MYSQL_PASSWORD: ${PROJECT_MYSQL_PASSWORD:-root}
-    # command: @TODO create databases on if not there.
     labels:
       - traefik.enable=false
     networks:
