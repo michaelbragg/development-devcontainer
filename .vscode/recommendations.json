@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "patbenatar.advanced-new-file",
+    "mrmlnc.vscode-duplicate",
+    "wayou.vscode-todo-highlight",
+    "rexshi.phpdoc-comment-vscode-plugin",
+    "calebporzio.better-phpunit",
+    "johnbillion.vscode-wordpress-hooks",
+    "claudiosanches.wpcs-whitelist-flags"
+  ]
+}
