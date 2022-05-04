@@ -27,7 +27,7 @@ RUN set -ex; \
 		libzip-dev \
 	; \
 	\
-	docker-php-ext-configure gd --with-freetype --with-jpeg; \
+	docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp; \
 	docker-php-ext-configure zip; \
 	docker-php-ext-install -j "$(nproc)" \
 		bcmath \
@@ -37,8 +37,12 @@ RUN set -ex; \
 		mysqli \
 		zip \
 	; \
-	pecl install imagick-3.4.4; \
+# WARNING: imagick is likely not supported on Alpine: https://github.com/Imagick/imagick/issues/328
+# https://pecl.php.net/package/imagick
+	pecl install imagick-3.6.0; \
 	docker-php-ext-enable imagick; \
+	rm -r /tmp/pear; \
+	\
 	pecl install igbinary \
 	docker-php-ext-igbinary \
 	pecl install redis \
