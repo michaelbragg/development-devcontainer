@@ -58,3 +58,17 @@ updates:
           update-types:
             - "version-update:semver-major"
             - "version-update:semver-minor"
+
+    - package-ecosystem: docker
+      directory: "./.docker/redis/Dockerfile"
+      registries: "*"
+      schedule:
+        interval: daily
+      open-pull-requests-limit: 10
+      commit-message:
+        prefix: "[Updated]"
+      ignore:
+        - dependency-name: "*"
+          update-types:
+            - "version-update:semver-major"
+            - "version-update:semver-minor"
