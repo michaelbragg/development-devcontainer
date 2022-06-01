@@ -143,7 +143,7 @@ services:
   mysql:
     container_name: "mysql"
     build:
-      dockerfile: ./mysql/mysql.dockerfile
+      dockerfile: ./mysql/Dockerfile
       context: .
     volumes:
       - ./database:/var/lib/mysql:delegated
