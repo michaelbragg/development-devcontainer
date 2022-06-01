@@ -37,7 +37,7 @@ services:
   nginx:
     container_name: "nginx"
     build:
-      dockerfile: ./nginx/nginx.dockerfile
+      dockerfile: ./nginx/Dockerfile
       context: .
     depends_on:
       - mysql

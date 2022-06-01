@@ -2,6 +2,21 @@ version: 2
 updates:
 
   # Docker app image.
+
+    - package-ecosystem: docker
+      directory: "./.docker/nginx/Dockerfile"
+      registries: "*"
+      schedule:
+        interval: daily
+      open-pull-requests-limit: 10
+      commit-message:
+        prefix: "[Updated]"
+      ignore:
+        - dependency-name: "*"
+          update-types:
+            - "version-update:semver-major"
+            - "version-update:semver-minor"
+
     - package-ecosystem: docker
       directory: "./.docker/php/8.0/Dockerfile"
       registries: "*"
