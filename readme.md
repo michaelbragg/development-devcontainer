@@ -43,11 +43,8 @@ PROJECT_MYSQL_USER=root
 PROJECT_MYSQL_PASSWORD=root
 
 ## PHP
-
-### XDEBUG
-XDEBUG_MODE=debug
-XDEBUG_SESSION=VSCODE
-
+PROJECT_PHP_VERSION=8.0
+PROJECT_PHP_XDEBUG_IDKEY=VSCODE
 ```
 
 ## How to use Development DevContainer
@@ -61,6 +58,7 @@ To use Development DevContainer, follow these steps:
 Visit [http://localhost:8080](http://localhost:8080) or [http://www.devcontainer.test:8080](http://www.devcontainer.test:8080) to view your `public` files.
 
 - PHP App: [http://localhost:8080](http://localhost:8080)
+- PHP xDebug App: [http://localhost:8181](http://localhost:8181)
 - MySQL: [http://localhost:3306](http://localhost:3306)
 - Traefik: [http://localhost:8888](http://localhost:8888)
 - Mailhog: [http://localhost:8025](http://localhost:8025)

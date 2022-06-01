@@ -1,4 +1,8 @@
-FROM php:8.0-fpm-alpine
+FROM php:8.1.5-fpm-alpine
+
+ARG USER_ID
+ARG GROUP_ID
+ARG XDEBUG_ENABLE
 
 # persistent dependencies
 RUN apk add --no-cache \
@@ -47,8 +51,7 @@ RUN set -ex; \
 	docker-php-ext-igbinary \
 	pecl install redis \
 	docker-php-ext-enable redis \
-	pecl install xdebug; \
-	docker-php-ext-enable xdebug; \
+	[ "${XDEBUG_ENABLE:-false}" = true ] && pecl install xdebug && docker-php-ext-enable xdebug; \
 	\
 	runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
@@ -66,5 +69,4 @@ COPY ./php/php.ini /usr/local/etc/php/php.ini
 COPY ./.shared/msmtprc /etc/msmtprc
 RUN chmod 644 /etc/msmtprc
 COPY ./php/conf.d/99-sendmail.conf /usr/local/etc/php/conf.d/mail.ini
-
 COPY ./php/conf.d/*.ini /usr/local/etc/php/conf.d/

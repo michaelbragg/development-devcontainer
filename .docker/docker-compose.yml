@@ -42,8 +42,10 @@ services:
     depends_on:
       - mysql
       - php
+      - php-xdebug
     ports:
       - "8080:80"
+      - "8181:81"
     volumes:
       - ../:/var/www/:delegated
     networks:
@@ -57,6 +59,7 @@ services:
       - traefik.backend=nginx
       - traefik.docker.network=public
       - traefik.http.services.${COMPOSE_PROJECT_NAME:-develop}_nginx.loadbalancer.server.port=8080
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-develop}_nginx.loadbalancer.server.port=8181
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-develop}_nginx.entrypoints=public
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-develop}_nginx.rule=Host(`www.${PROJECT_BASE_URL:-localhost}`)
 
@@ -66,10 +69,41 @@ services:
 
   php:
     container_name: "php"
+    platform: linux/arm64
     build:
-      dockerfile: ./php/php.dockerfile
+      dockerfile: ./php/${PROJECT_PHP_VERSION-8.0}/Dockerfile
       context: .
-    #user: "33"  # Set to your web-server user
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    extra_hosts:
+      - "www.${PROJECT_BASE_URL:-localhost}:172.18.0.1"
+    working_dir: ${PROJECT_ROOT_DIR:-/var/www/public}
+    volumes:
+      - ../:/var/www/:delegated
+    environment:
+      SESSION_DRIVER: redis
+      CACHE_DRIVER: redis
+    labels:
+        - traefik.enable=false
+    networks:
+      - public
+      - private
+
+  php-xdebug:
+    container_name: "php-xdebug"
+    platform: linux/arm64
+    build:
+      dockerfile: ./php/${PROJECT_PHP_VERSION-8.0}/Dockerfile
+      context: .
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+    env_file:
+      - ./.env
     restart: unless-stopped
     extra_hosts:
       - "www.${PROJECT_BASE_URL:-localhost}:172.18.0.1"
@@ -80,6 +114,7 @@ services:
       SESSION_DRIVER: redis
       CACHE_DRIVER: redis
       XDEBUG_ENABLE: 1
+      XDEBUG_MODE: debug
     labels:
         - traefik.enable=false
     networks:
