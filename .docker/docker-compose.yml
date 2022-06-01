@@ -71,7 +71,7 @@ services:
     container_name: "php"
     platform: linux/arm64
     build:
-      dockerfile: ./php/${PROJECT_PHP_VERSION-8.0}/Dockerfile
+      dockerfile: ./php/${PROJECT_PHP_VERSION:-8.0}/Dockerfile
       context: .
       args:
         USER_ID: ${USER_ID:-0}
@@ -97,7 +97,7 @@ services:
     container_name: "php-xdebug"
     platform: linux/arm64
     build:
-      dockerfile: ./php/${PROJECT_PHP_VERSION-8.0}/Dockerfile
+      dockerfile: ./php/${PROJECT_PHP_VERSION:-8.0}/Dockerfile
       context: .
       args:
         USER_ID: ${USER_ID:-0}
