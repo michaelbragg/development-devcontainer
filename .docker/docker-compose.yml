@@ -136,6 +136,26 @@ services:
   #   labels:
   #     - traefik.enable=false
 
+  composer:
+    container_name: "composer"
+    build:
+      dockerfile: ./php/composer/Dockerfile
+      context: .
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+        PHP_VERSION: ${PROJECT_PHP_VERSION:-8.0}
+    working_dir: ${PROJECT_DIR:-/var/www}
+    volumes:
+      - ../:/var/www/:delegated
+    networks:
+      - public
+      - private
+    profiles:
+      - dev
+    labels:
+      - traefik.enable=false
+
 # ============================================================================ #
 # Database                                                                     #
 # ============================================================================ #
