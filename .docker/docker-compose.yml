@@ -15,11 +15,11 @@ services:
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.public.address=:8080"
-      - "--entrypoints.traefik.address=:8888"
-      # - "--entrypoints.secure.address=:433"
+      - "--entrypoints.traefik.address=:${PROJECT_TRAEFIK_PORT:-8888}"
+      - "--entrypoints.public.address=:${PROJECT_NGINX_PORT:-8080}"
+#      - "--entrypoints.public.address=:${PROJECT_NGINX_SSL_PORT:-8433}"
     ports:
-      - "8888:8888"
+      - "${PROJECT_TRAEFIK_PORT:-8888}:8888"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
@@ -28,7 +28,7 @@ services:
       - traefik.enable=true
       - traefik.backend=traefik
       - traefik.docker.network=public
-      - traefik.http.services.${COMPOSE_PROJECT_NAME:-develop}_traefik.loadbalancer.server.port=8888
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-develop}_traefik.loadbalancer.server.port=${PROJECT_TRAEFIK_PORT:-8888}
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-develop}_traefik.rule=Host(`traefik.${PROJECT_BASE_URL:-localhost}`)
       # - traefik.frontend.auth.basic=${TRAEFIK_AUTH:-root}
 
@@ -45,8 +45,8 @@ services:
       - mysql
       - app
     ports:
-      - "8080:80"
-      - "8181:81"
+      - "${PROJECT_NGINX_PORT:-8080}:80"
+      # - "${PROJECT_NGINX_PORT:-8433}:433"
     volumes:
       - ../:/var/www/:delegated
     networks:
@@ -59,8 +59,8 @@ services:
       - traefik.enable=true
       - traefik.backend=nginx
       - traefik.docker.network=public
-      - traefik.http.services.${COMPOSE_PROJECT_NAME:-develop}_nginx.loadbalancer.server.port=8080
-      - traefik.http.services.${COMPOSE_PROJECT_NAME:-develop}_nginx.loadbalancer.server.port=8181
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-develop}_nginx.loadbalancer.server.port=${PROJECT_NGINX_PORT:-8080}
+      # - traefik.http.services.${COMPOSE_PROJECT_NAME:-develop}_nginx.loadbalancer.server.port=${PROJECT_NGINX_PORT:-8433}
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-develop}_nginx.entrypoints=public
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-develop}_nginx.rule=Host(`www.${PROJECT_BASE_URL:-localhost}`)
 
@@ -146,7 +146,7 @@ services:
     command: --init-file="/var/lib/mysql/init.sql"
     restart: unless-stopped
     ports:
-      - "3306:3306"
+      - "${PROJECT_MYSQL_PORT:-3306}:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${PROJECT_MYSQL_ROOT_PASSWORD:-root}
       MYSQL_USER: ${PROJECT_MYSQL_USER:-root}
@@ -165,7 +165,7 @@ services:
     image: mailhog/mailhog:latest
     restart: unless-stopped
     ports:
-      - "8025:8025"
+      - "${PROJECT_MAILHOG_PORT:-8025}:8025"
     networks:
       - public
       - private
@@ -173,7 +173,7 @@ services:
       - traefik.enable=true
       - traefik.backend=mailhog
       - traefik.docker.network=public
-      - traefik.http.services.${COMPOSE_PROJECT_NAME:-develop}_mailhog.loadbalancer.server.port=8025
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-develop}_mailhog.loadbalancer.server.port=${PROJECT_MAILHOG_PORT:-8025}
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-develop}_mailhog.rule=Host(`mailhog.${PROJECT_BASE_URL:-localhost}`)
 
 # ============================================================================ #
