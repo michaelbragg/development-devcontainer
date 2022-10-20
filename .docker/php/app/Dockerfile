@@ -1,4 +1,6 @@
-FROM php:8.1.5-fpm-alpine
+ARG PHP_VERSION
+FROM php:${PHP_VERSION}-fpm-alpine
+# FROM php:8.0-fpm-alpine
 
 ARG USER_ID
 ARG GROUP_ID
