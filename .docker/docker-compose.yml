@@ -6,8 +6,10 @@ services:
 # ============================================================================ #
 
   traefik:
-    image: traefik:v2.5.4
     container_name: "traefik"
+    build:
+      dockerfile: ./traefik/Dockerfile
+      context: .
     restart: unless-stopped
     command:
       - "--api.insecure=true"
