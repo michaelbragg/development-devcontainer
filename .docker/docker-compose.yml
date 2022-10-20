@@ -162,7 +162,9 @@ services:
 
   mailhog:
     container_name: "mailhog"
-    image: mailhog/mailhog:latest
+    build:
+      dockerfile: ./mailhog/Dockerfile
+      context: .
     restart: unless-stopped
     ports:
       - "${PROJECT_MAILHOG_PORT:-8025}:8025"
