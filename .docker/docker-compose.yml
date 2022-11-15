@@ -50,7 +50,7 @@ services:
       - "${PROJECT_NGINX_PORT:-8080}:80"
       # - "${PROJECT_NGINX_PORT:-8433}:433"
     volumes:
-      - ../:/var/www/:delegated
+      - ../:/var/www/:cached
     networks:
       public:
         aliases:
@@ -87,12 +87,11 @@ services:
     working_dir: ${PROJECT_DIR:-/var/www}
     volumes:
       - ../:/var/www/:cached
-      #- code:/var/www
     environment:
       SESSION_DRIVER: redis
       CACHE_DRIVER: redis
-      # XDEBUG_ENABLE: 1
-      # XDEBUG_MODE: debug
+      XDEBUG_ENABLE: 1
+      XDEBUG_MODE: debug
     labels:
         - traefik.enable=false
     networks:

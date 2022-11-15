@@ -6,7 +6,9 @@
 	"overrideCommand": false,
 
 	// Set *default* container specific settings.json values on container create.
-	"settings": {},
+	"settings": {
+    "php.validate.executablePath": "/usr/local/bin/php"
+  },
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
     // VS Code.
@@ -15,6 +17,8 @@
 		"eamodio.gitlens",
 		"EditorConfig.EditorConfig",
     "EthanSK.restore-terminals",
+    // CSS.
+    "stylelint.vscode-stylelint",
     // PHP.
     "ikappas.composer",
 		"neilbrayfield.php-docblocker",
@@ -25,6 +29,8 @@
 		"bmewburn.vscode-intelephense-client",
 		"MehediDracula.php-namespace-resolver",
 		"valeryanm.vscode-phpsab",
+    "rexshi.phpdoc-comment-vscode-plugin",
+    "calebporzio.better-phpunit",
     // XML.
 		"DotJoshJohnson.xml",
 		// YML.

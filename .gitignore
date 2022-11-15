@@ -5,9 +5,12 @@ error_log
 .DS_Store
 
 # Development
+/.make/*
+/makefile
 
 ## Composer
 auth.json
+composer.json
 composer.lock
 /vendor
 /tools/*/vendor
@@ -23,3 +26,4 @@ composer.lock
 *.log
 
 # Application
+/public
